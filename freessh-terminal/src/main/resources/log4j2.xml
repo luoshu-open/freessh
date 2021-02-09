@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，
+ 你会看到log4j2内部各种详细输出。可以设置成OFF(关闭)或Error(只输出错误信息)
+-->
+<Configuration status="WARN">
+    <Properties> <!-- 配置日志文件输出目录，此配置将日志输出到LOG_HOME目录下的指定文件夹 -->
+        <Property name="APPLICATION_NAME">freessh</Property>
+        <Property name="LOG_HOME">/usr/local/logs/${APPLICATION_NAME}</Property>
+        <Property name="LOG_BACKUP">${LOG_HOME}/backup</Property>
+        <!-- 文件存储时间 -->
+        <Property name="FILE_EXPIRE_TIME">30d</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%X{traceId}] [%level] %logger{36} - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <!-- 输出控制台日志的配置 -->
+        <Console name="console" target="SYSTEM_OUT">
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <!-- 日志文件超过50M自动压缩到backup目录下 -->
+        <RollingRandomAccessFile name="infoFile" fileName="${LOG_HOME}/${APPLICATION_NAME}-info.log"
+                                 filePattern="${LOG_BACKUP}/${APPLICATION_NAME}-info-%d{yyyy-MM-dd}-%i.log.gz"
+                                 bufferSize="2097152">
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+            </Filters>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="500">
+                <!-- 保留12天的日志文件 -->
+                <Delete basePath="${LOG_BACKUP}" maxDepth="1">
+                    <IfLastModified age="${FILE_EXPIRE_TIME}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!-- 日志文件超过50M自动压缩到backup目录下 -->
+        <RollingRandomAccessFile name="warnFile" fileName="${LOG_HOME}/${APPLICATION_NAME}-warn.log"
+                                 filePattern="${LOG_BACKUP}/${APPLICATION_NAME}-warn-%d{yyyy-MM-dd}-%i.log.gz"
+                                 bufferSize="2097152">
+            <ThresholdFilter level="WARN"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="150">
+                <!-- 保留12天的日志文件 -->
+                <Delete basePath="${LOG_BACKUP}" maxDepth="1">
+                    <IfLastModified age="${FILE_EXPIRE_TIME}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!-- 日志文件超过50M自动压缩到backup目录下 -->
+        <RollingRandomAccessFile name="errorFile" fileName="${LOG_HOME}/${APPLICATION_NAME}-error.log"
+                                 filePattern="${LOG_BACKUP}/${APPLICATION_NAME}-error-%d{yyyy-MM-dd}-%i.log.gz"
+                                 bufferSize="2097152">
+            <ThresholdFilter level="ERROR"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="150">
+                <!-- 保留12天的日志文件 -->
+                <Delete basePath="${LOG_BACKUP}" maxDepth="1">
+                    <IfLastModified age="${FILE_EXPIRE_TIME}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <!--druid慢SQL的日志记录追加器-->
+        <RollingRandomAccessFile name="slowSqlRollingFile" fileName="${LOG_HOME}/${APPLICATION_NAME}-slowSql.log"
+                                 filePattern="${LOG_BACKUP}/${APPLICATION_NAME}-slowSql-%d{yyyy-MM-dd}-%i.log.gz"
+                                 bufferSize="2097152">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="150">
+                <!-- 保留12天的日志文件 -->
+                <Delete basePath="${LOG_BACKUP}" maxDepth="1">
+                    <IfLastModified age="${FILE_EXPIRE_TIME}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="pickupAppLogFile" fileName="${LOG_HOME}/${APPLICATION_NAME}-pickupAppLog.log"
+                                 filePattern="${LOG_BACKUP}/${APPLICATION_NAME}-pickupAppLog-%d{yyyy-MM-dd}-%i.log.gz"
+                                 bufferSize="2097152">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="150">
+                <!-- 保留12天的日志文件 -->
+                <Delete basePath="${LOG_BACKUP}" maxDepth="1">
+                    <IfLastModified age="${FILE_EXPIRE_TIME}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <!-- 全局配置，默认所有的Logger都继承此配置 -->
+    <Loggers>
+        <!-- AsyncRoot - 异步记录日志 - 需要LMAX Disruptor的支持 -->
+        <AsyncRoot level="WARN" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="infoFile"/>
+            <AppenderRef ref="warnFile"/>
+            <AppenderRef ref="errorFile"/>
+        </AsyncRoot>
+        <!--记录druid-sql的记录-->
+        <logger name="com.alibaba.druid" level="INFO" additivity="false">
+            <appender-ref ref="slowSqlRollingFile"/>
+        </logger>
+        <logger name="org.freessh" level="DEBUG"></logger>
+
+    </Loggers>
+</Configuration>
