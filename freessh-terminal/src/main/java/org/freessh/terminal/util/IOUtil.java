@@ -19,6 +19,9 @@ public class IOUtil {
             sb.append(line);
             sb.append("\n");
         }
+        if("".equals(sb.toString())){
+            return "";
+        }
         return sb.substring(0 , sb.length() - 1);
     }
 }

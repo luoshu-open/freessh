@@ -26,6 +26,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.freessh</groupId>
+                <artifactId>freessh-terminal</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- ui 组件库 -->
             <dependency>
                 <groupId>com.jfoenix</groupId>
@@ -66,6 +73,16 @@
         </dependencies>
 
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 
 
 

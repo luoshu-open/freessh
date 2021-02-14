@@ -6,6 +6,7 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import org.freessh.terminal.annotation.WebCall;
+import org.freessh.terminal.model.SSHConnectConfig;
 import org.freessh.terminal.util.ThreadHelper;
 
 import java.io.*;
@@ -23,13 +24,26 @@ public class Terminal extends TerminalView{
 
     private final ObjectProperty<Writer> outputWriterProperty;
 
+    /**
+     * 如果为 true ， 代表着当前的会话正在连接中，
+     * 如果为 false ， 代表着当前会话已断开
+     */
+    private boolean onSession = false;
+
+    /**
+     * 当前终端连接的配置信息
+     */
+    private SSHConnectConfig connectConfig;
 
 
+    public Terminal(SSHConnectConfig connectConfig) {
+        this.connectConfig = connectConfig;
 
-    public Terminal() {
         this.commandQueue = new LinkedBlockingQueue<>();
         this.outputWriterProperty = new SimpleObjectProperty<>();
     }
+
+
 
     /**
      * js 调用
@@ -96,10 +110,6 @@ public class Terminal extends TerminalView{
         // 第一次初始化终端大小
         updateWinSize();
 
-//        setInputReader(new BufferedReader(new InputStreamReader(process.getInputStream())));
-//        setErrorReader(new BufferedReader(new InputStreamReader(process.getErrorStream())));
-//        setOutputWriter(new BufferedWriter(new OutputStreamWriter(process.getOutputStream())));
-
         ThreadHelper.start(() -> {
             try {
                 sshConnect();
@@ -121,10 +131,9 @@ public class Terminal extends TerminalView{
         // 验证 ssh 的地址，使用 PromiscuousVerifier 为不验证
         ssh.addHostKeyVerifier(new PromiscuousVerifier());
 
-        ssh.connect("101.37.34.225" , 22);
+        ssh.connect(connectConfig.getHost() , connectConfig.getPort());
         try {
-            ssh.authPassword("root" , "zxj123qwe!@#");
-//            ssh.authPublickey(System.getProperty("user.name"));
+            ssh.authPassword(connectConfig.getUsername() , connectConfig.getPassword());
 
             final Session session = ssh.startSession();
             try {
@@ -133,29 +142,17 @@ public class Terminal extends TerminalView{
 
                 final Session.Shell shell = session.startShell();
 
-//                setInputReader(new BufferedReader(new InputStreamReader(process.getInputStream())));
                 setInputReader(new BufferedReader(new InputStreamReader(shell.getInputStream())));
-//                setErrorReader(new BufferedReader(new InputStreamReader(process.getErrorStream())));
                 setErrorReader(new BufferedReader(new InputStreamReader(shell.getErrorStream())));
-//                setOutputWriter(new BufferedWriter(new OutputStreamWriter(process.getOutputStream())));
                 setOutputWriter(new BufferedWriter(new OutputStreamWriter(shell.getOutputStream())));
 
+                this.onSession = true;
 
-//                new StreamCopier(shell.getInputStream(), new PrintStream(shell.getOutputStream()), LoggerFactory.DEFAULT)
-//                        .bufSize(shell.getLocalMaxPacketSize())
-//                        .spawn("stdout");
-//
-//                PrintStream errorPrint = new PrintStream(shell.getOutputStream());
-//                new StreamCopier(shell.getErrorStream(), errorPrint, LoggerFactory.DEFAULT)
-//                        .bufSize(shell.getLocalMaxPacketSize())
-//                        .spawn("stderr");
-//
-//                new StreamCopier(shell.getInputStream(), shell.getOutputStream(), LoggerFactory.DEFAULT)
-//                        .bufSize(shell.getRemoteMaxPacketSize())
-//                        .copy();
-
-                // TODO: 这里的ssh连接需要有一个断开的机制，比如点击窗口上面的x，或者输出 exit ， 目前写死睡眠
-                Thread.sleep(100000000);
+                while (this.onSession) {
+                    Thread.sleep(2000);
+                }
+                // TODO: 验证会话是否有退出
+                System.out.println("会话退出");
 
             } catch (InterruptedException e) {
                 e.printStackTrace();

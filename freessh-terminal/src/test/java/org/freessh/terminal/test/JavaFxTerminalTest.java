@@ -26,7 +26,7 @@ public class JavaFxTerminalTest extends Application {
         Scene scene = new Scene(pane , 800 , 600);
         primaryStage.setScene(scene);
 
-        Terminal terminal = new Terminal();
+        Terminal terminal = new Terminal(null);
 
         pane.getChildren().add(terminal);
 
