@@ -23,7 +23,7 @@ public class ConfigTest {
         server.setHost("1111");
         server.setPort(22);
         server.setUsername("root");
-        server.setPassword(Base64.getEncoder().encodeToString("111".getBytes(StandardCharsets.UTF_8)));
+        server.setPassword(Base64.getEncoder().encodeToString("1111".getBytes(StandardCharsets.UTF_8)));
         server.setAuthType(0);
         server.setCreateTime(new Date());
 

@@ -23,5 +23,10 @@ public class SSHConnectConfig {
 
     private String password;
 
+    /**
+     * 别名
+     */
+    private String alias;
+
 
 }

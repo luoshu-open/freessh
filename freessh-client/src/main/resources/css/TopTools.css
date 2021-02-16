@@ -1,0 +1,8 @@
+#topTools{
+    /*背景色*/
+    -fx-background-color: #f6f2f3;
+    /*设置底部边框*/
+    -fx-border-width: 0 0 1 0;
+    /*设置边框颜色*/
+    -fx-border-color: #ccc;
+}

@@ -1,17 +1,18 @@
 package org.freessh.sshclient;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.freessh.sshclient.component.grouplist.GroupListView;
-import org.freessh.sshclient.component.ImageButton;
 import org.freessh.sshclient.component.grouplist.Item;
 import org.freessh.sshclient.component.terminal.TerminalView;
+import org.freessh.sshclient.component.topbar.TopTools;
 import org.freessh.sshclient.config.ConfigHelper;
 import org.freessh.sshclient.model.SSHServer;
 import org.freessh.sshclient.util.CollectionUtil;
@@ -20,12 +21,15 @@ import org.freessh.sshclient.util.WindowUtil;
 import org.freessh.terminal.Terminal;
 import org.freessh.terminal.model.SSHConnectConfig;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 
 /**
  * @author 朱小杰
  */
+@Slf4j
 public class App extends Application {
 
     private BorderPane mainContainer;
@@ -80,17 +84,16 @@ public class App extends Application {
      * @return
      */
     protected Pane createTopTools() {
-        HBox pane = new HBox();
-        pane.setPrefHeight(40);
-        pane.setPadding(new Insets(0 , 15 , 0 , 15));
-        pane.setBackground(WindowUtil.createBackground(Constant.BACKGROUND_COLOR));
+/*        final HBox hBox;
+        try {
+            hBox = FXMLLoader.load(getClass().getResource("/fxml/TopTools.fxml"));
+            hBox.getStylesheets().add(getClass().getResource("/css/TopTools.css").toExternalForm());
+            return hBox;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage() , e);
+        }*/
 
-        pane.setStyle("-fx-border-width: 0 0 1 0;-fx-border-color: #ccc;");
-
-        ImageButton imageButton = new ImageButton("/img/add.png" , "增加");
-        pane.getChildren().add(imageButton);
-
-        return pane;
+        return new TopTools();
     }
 
     protected TerminalView createTerminalView() {
@@ -127,7 +130,8 @@ public class App extends Application {
                         sshConnectConfig.setHost(source.getHost());
                         sshConnectConfig.setPort(source.getPort());
                         sshConnectConfig.setUsername(source.getUsername());
-                        sshConnectConfig.setPassword(new String(Base64.getDecoder().decode(source.getPassword())));
+                        sshConnectConfig.setPassword(new String(Base64.getDecoder().decode(source.getPassword()) , StandardCharsets.UTF_8));
+                        sshConnectConfig.setAlias(source.getAlias());
 
                         Terminal terminal = new Terminal(sshConnectConfig);
                         this.terminalView.addTerminal(terminal);

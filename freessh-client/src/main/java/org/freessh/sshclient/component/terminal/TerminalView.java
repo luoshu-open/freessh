@@ -10,6 +10,7 @@ import org.freessh.sshclient.component.tab.Tab;
 import org.freessh.sshclient.component.tab.TabView;
 import org.freessh.sshclient.util.StringUtil;
 import org.freessh.terminal.Terminal;
+import org.freessh.terminal.model.SSHConnectConfig;
 
 /**
  * 终端的显示控件
@@ -82,12 +83,14 @@ public class TerminalView extends Pane {
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(2);
 
-        Text hostText = new Text("192.168.191.191");
+        final SSHConnectConfig connectConfig = terminal.getConnectConfig();
+
+        Text hostText = new Text(connectConfig.getHost());
         hostText.setFont(Font.font(14));
         hostText.setFill(Color.web("#333333"));
         vBox.getChildren().add(hostText);
 
-        String alias = "IDC 机房真好看啊，好地方";
+        String alias = connectConfig.getAlias();
         if(!StringUtil.isBlank(alias)){
             if(alias.length() > 10){
                 alias = alias.substring(0 , 10);

@@ -1,5 +1,6 @@
 package org.freessh.sshclient.component;
 
+import javafx.beans.NamedArg;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -44,7 +45,12 @@ public class ImageButton extends VBox {
         this.renderUI();
     }
 
-    public ImageButton(String imgPath, String text) {
+    /**
+     * 这里必须加上 @{@link NamedArg} 注解
+     * @param imgPath
+     * @param text
+     */
+    public ImageButton(@NamedArg("imgPath") String imgPath, @NamedArg("text") String text) {
         this(ImageButton.class.getResourceAsStream(imgPath), text);
     }
 

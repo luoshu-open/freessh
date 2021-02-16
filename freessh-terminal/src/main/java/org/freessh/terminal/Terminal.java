@@ -2,6 +2,7 @@ package org.freessh.terminal;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import lombok.Getter;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
@@ -16,6 +17,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 朱小杰
  */
 public class Terminal extends TerminalView{
+    static {
+//        System.out.println("加载安全库");
+//        Security.addProvider(new BouncyCastleProvider());
+    }
 
     /**
      * 使用一个队列来保存终端输入的命令，将会在另一个线程中将命令执行
@@ -33,6 +38,7 @@ public class Terminal extends TerminalView{
     /**
      * 当前终端连接的配置信息
      */
+    @Getter
     private SSHConnectConfig connectConfig;
 
 
@@ -154,7 +160,8 @@ public class Terminal extends TerminalView{
                 // TODO: 验证会话是否有退出
                 System.out.println("会话退出");
 
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
+                System.out.println("连接错误");
                 e.printStackTrace();
             } finally {
                 session.close();

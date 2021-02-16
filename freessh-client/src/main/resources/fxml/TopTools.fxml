@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import org.freessh.sshclient.component.ImageButton?>
+<?import javafx.geometry.Insets?>
+
+
+<fx:root type="javafx.scene.layout.HBox"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:id="topTools"
+         stylesheets="@../css/TopTools.css"
+         fx:controller="org.freessh.sshclient.controller.TopToolsController">
+    <padding>
+        <Insets top="0" right="15" bottom="0" left="15"></Insets>
+    </padding>
+
+    <children>
+        <ImageButton onMouseClicked="#onAdd" imgPath="/img/add.png" text="增加" />
+    </children>
+</fx:root>
