@@ -1,5 +1,6 @@
 package org.freessh.sshclient.component.tab;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -8,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import lombok.Setter;
 import org.freessh.sshclient.util.WindowUtil;
 
 /**
@@ -30,9 +32,14 @@ public class TabHeader extends HBox {
     private final Image hoverCloseImg = new Image(TabHeader.class.getResourceAsStream("/img/cha2.png"));
 
 
+    @Setter
+    private EventHandler<MouseEvent> closeEvent;
+
     private HBox content;
     private HBox closeBtn;
     private ImageView closeImage;
+
+
 
     public TabHeader() {
         this.setAlignment(Pos.CENTER);
@@ -62,7 +69,10 @@ public class TabHeader extends HBox {
 
         // 关闭按钮的点击事件
         this.closeBtn.addEventHandler(MouseEvent.MOUSE_CLICKED , e -> {
-
+            e.consume();
+            if(this.closeEvent != null){
+                this.closeEvent.handle(e);
+            }
         });
 
         // 鼠标移入移出的效果
@@ -87,6 +97,7 @@ public class TabHeader extends HBox {
     protected void select(){
         this.selected = true;
         this.setBackground(WindowUtil.createBackground(this.activeColor));
+//        this.content.setBackground(WindowUtil.createBackground(this.activeColor));
     }
 
     /**
@@ -106,7 +117,7 @@ public class TabHeader extends HBox {
     }
 
     public void setContent(Pane pane){
-        this.content.getChildren().removeAll();
+        this.content.getChildren().clear();
         this.content.getChildren().add(pane);
     }
 

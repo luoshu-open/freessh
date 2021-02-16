@@ -3,7 +3,6 @@ package org.freessh.sshclient.component.tab;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,16 +22,19 @@ public class TabView extends VBox {
 
     private ObservableList<Tab> tabs = FXCollections.observableArrayList();
 
-    private Color headerColor = Color.web("#DFDFDF");
+    public static final Color headerColor = Color.web("#DFDFDF");
     private Color tagActiveColor = Color.web("#FFFFFF");
 
+    /**
+     *  tab 列表
+     */
     private HBox hBox;
     private Pane bodyPane;
 
     /**
      * 选项卡的高度
      */
-    private int headerHeight = 40;
+    public static final int headerHeight = 40;
 
     /**
      * 可以注册 tab 被选中的事件
@@ -74,19 +76,22 @@ public class TabView extends VBox {
     }
 
     /**
-     * 当添加了一个 tab 时触发
+     * 当添加了一个 tab 时触发 ， 只用于内部调用
      * @param tab
      */
     protected void addTab(Tab tab){
-        Pane tabPane = createHeaderPane();
-        tabPane.getChildren().add(tab.getHeader());
 
-        this.hBox.getChildren().add(tabPane);
+
+        this.hBox.getChildren().add(tab.getHeader());
 
         Region body = (Region) tab.getBody();
         body.prefWidthProperty().bind(this.bodyPane.widthProperty());
         body.prefHeightProperty().bind(this.bodyPane.heightProperty());
 
+        // 注册关闭 tab 的事件
+        tab.setCloseEvent(e -> {
+            this.getTabs().remove(tab);
+        });
 
         this.setBody(body);
 
@@ -95,6 +100,17 @@ public class TabView extends VBox {
 
         // 注册 tab 的事件
         this.registerTabEvent(tab);
+    }
+
+    /**
+     * 删除一个 tab ， 内部调用
+     * @param tab
+     */
+    protected void removeTab(Tab tab){
+        if(!this.currentTab.equals(tab)){
+            this.getTabs().remove(tab);
+            this.hBox.getChildren().remove(tab.getHeader());
+        }
     }
 
 
@@ -162,16 +178,7 @@ public class TabView extends VBox {
         return this.currentTab;
     }
 
-    /**
-     * 创建一个选项卡的 pane
-     */
-    protected Pane createHeaderPane(){
-        HBox pane = new HBox();
-        pane.setPrefHeight(headerHeight);
-        pane.setAlignment(Pos.CENTER);
-        pane.setBackground(WindowUtil.createBackground(headerColor));
-        return pane;
-    }
+
 
     private class TabChangeListener implements ListChangeListener<Tab>{
 
@@ -184,6 +191,15 @@ public class TabView extends VBox {
                     if(!CollectionUtil.isEmpty(addedSubList)){
                         for (Tab tab : addedSubList) {
                             addTab(tab);
+                        }
+                    }
+                }
+                // 删除一个
+                else if(c.wasRemoved()){
+                    List<? extends Tab> removed = c.getRemoved();
+                    if(!CollectionUtil.isEmpty(removed)){
+                        for (Tab tab : removed) {
+                            removeTab(tab);
                         }
                     }
                 }
