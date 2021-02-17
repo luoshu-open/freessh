@@ -1,0 +1,24 @@
+#serverEdit{
+    -fx-background-color: #fff;
+}
+FormItem text{
+    -fx-fill: #333;
+}
+FormItem TextField , FormItem PasswordField , FormItem TextArea{
+    -fx-fill: #333;
+    -fx-background-color: #fff;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-color: #ccc;
+    -fx-font-size: 13;
+    -fx-border-radius: 2;
+}
+FormItem TextField:hover{
+    -fx-border-color: #248dff;
+}
+FormItem PasswordField:hover:hover{
+    -fx-border-color: #248dff;
+}
+FormItem TextArea:hover{
+    -fx-border-color: #248dff;
+}
+

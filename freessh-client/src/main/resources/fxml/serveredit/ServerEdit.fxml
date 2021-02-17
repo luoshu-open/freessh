@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import org.freessh.sshclient.component.FormItem?>
+<?import javafx.geometry.Insets?>
+<?import org.freessh.sshclient.component.SButton?>
+<fx:root type="javafx.scene.layout.VBox"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:id="serverEdit"
+         stylesheets="@../../css/serveredit.css"
+         spacing="10">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+    <children>
+
+        <FormItem text="名称" >
+            <body>
+                <TextField fx:id="calias" prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <FormItem text="地址" >
+            <body>
+                <TextField fx:id="chost" prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <FormItem text="端口" >
+            <body>
+                <TextField fx:id="cport" text="22" prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <FormItem text="用户名" >
+            <body>
+                <TextField fx:id="cusername" prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <FormItem text="密码" >
+            <body>
+                <PasswordField fx:id="cpassword" prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <FormItem text="备注" >
+            <body>
+                <TextArea fx:id="cremark" wrapText="true"  prefWidth="300"/>
+            </body>
+        </FormItem>
+
+        <HBox spacing="20" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="30" bottom="30"/>
+            </padding>
+            <children>
+                <SButton>取消</SButton>
+                <SButton typ="PRIMARY" onMouseClicked="#save">保存</SButton>
+            </children>
+        </HBox>
+
+    </children>
+
+</fx:root>

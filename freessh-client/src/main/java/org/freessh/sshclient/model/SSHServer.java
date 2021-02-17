@@ -46,6 +46,11 @@ public class SSHServer {
     private int authType;
 
     /**
+     * 备注信息
+     */
+    private String remark;
+
+    /**
      * 创建时间
      */
     @JsonProperty()
